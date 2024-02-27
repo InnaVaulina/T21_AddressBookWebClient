@@ -1,0 +1,44 @@
+﻿@model AddressBookWebClient.ViewData.IEntryViewModel
+
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+
+<h1 class="head">Вход</h1>
+
+
+    
+<div class="row area">
+    <div class="form col-12 col-sm-8 col-md-6 col-lg-6 offset-sm-2 offset-md-3 offset-lg-3">
+        <form asp-action="Login" asp-antiforgery="true">
+            <fieldset>
+
+                <legend>Вход</legend>
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+
+                <p class="form__item">
+                    <label asp-for="LoginProp" class="form__label">Логин</label>
+                    <input type="text" asp-for="LoginProp" minlength="1" maxlength="20" size="20" required class="form__element"
+                           placeholder="Логин">
+                </p>
+
+                <p class="form__item">
+                    <label asp-for="Password" class="form__label">Пароль</label>
+                    <input type="text" asp-for="Password" minlength="1" maxlength="20" size="20" required class="form__element"
+                           placeholder="Пароль">
+                </p>
+
+                <p class="form__item">
+                    <input type="submit" value="Войти" class="form__button">
+                </p>
+            </fieldset>
+        </form>
+
+    </div>
+
+</div>

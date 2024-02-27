@@ -1,0 +1,270 @@
+﻿@model Note
+
+
+
+@{
+    ViewData["Title"] = "Single";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+
+<h1 class="head">Работа с элементом</h1>
+
+<div class="tabs area">
+    
+@{
+    string tab1checked = "";
+    string tab2checked = "";
+    string tab3checked = "";
+        
+    switch (ViewData["Tab"])
+    {
+        case "Details":
+            { tab1checked = "checked"; break; }
+        case "Edit":
+            { tab2checked = "checked"; break; }
+        case "Delete":
+            { tab3checked = "checked"; break; }
+        default:
+            { tab1checked = "checked"; break; }
+    }
+
+
+        <input type="radio" name="tab-btn" id="tab-btn-single" value="" @tab1checked>
+        <label for="tab-btn-single">Просмотр</label>
+
+        if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
+        {
+            <input type="radio" name="tab-btn" id="tab-btn-edit" value="" @tab2checked>
+            <label for="tab-btn-edit">Редактировать</label>
+
+            <input type="radio" name="tab-btn" id="tab-btn-delete" value="" @tab3checked>
+            <label for="tab-btn-delete">Удалить</label>
+        }
+}
+    
+    <section id="content-single" class="record-looking">
+        <h4>Запись &#8470;  @Html.DisplayFor(model => model.Id)</h4>
+        <hr />
+        <dl class="attrs-table">
+            <div class="attrs-table__row">
+                <dt>
+                    @Html.DisplayNameFor(model => model.FamilyName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.FamilyName)
+                </dd>
+            </div>
+            <div class="attrs-table__row">
+                <dt>
+                    @Html.DisplayNameFor(model => model.Name)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Name)
+                </dd>
+            </div>
+            <div class="attrs-table__row">
+                <dt>
+                    @Html.DisplayNameFor(model => model.PatronymicName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.PatronymicName)
+                </dd>
+            </div>
+            <div class="attrs-table__row">
+                <dt>
+                    @Html.DisplayNameFor(model => model.Tel)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Tel)
+                </dd>
+            </div>
+            <div class="attrs-table__row">
+                <dt>
+                    @Html.DisplayNameFor(model => model.Address)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Address)
+                </dd>
+            </div>
+            <div class="attrs-table__row">
+                <dt>
+                    @Html.DisplayNameFor(model => model.Description)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Description)
+                </dd>
+            </div>
+        </dl>
+    </section>
+
+    @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
+    {
+        <section id="content-edit" class="record-change">
+            <h4>Запись &#8470;  @Html.DisplayFor(model => model.Id)</h4>
+            <hr />
+
+            <form class="form col-12 col-sm-12 col-md-12 col-lg-6 offset-lg-3" id="sendform">
+                <fieldset>
+
+                    <legend>Изменение записи</legend>
+                    <p style="display:none">
+                        <input type="text" name="Id" class="form__element"
+                        value="@Html.DisplayFor(Model => Model.Id)">
+                    </p>
+                    <p class="form__item">
+                        <label for="FamilyName" class="form__label">@Html.DisplayNameFor(model => model.FamilyName)</label>
+                        <input type="text" name="FamilyName" minlength="1" maxlength="50" size="30" required class="form__element"
+                        placeholder="@Html.DisplayNameFor(model => model.FamilyName)" 
+                        value="@Html.DisplayFor(Model => Model.FamilyName)">
+                    </p>
+                    <p class="form__item">
+                        <label for="Name" class="form__label">@Html.DisplayNameFor(model => model.Name)</label>
+                        <input type="text" name="Name" minlength="1" maxlength="50" size="30" required class="form__element"
+                        placeholder="@Html.DisplayNameFor(model => model.Name)" 
+                        value="@Html.DisplayFor(Model => Model.Name)">
+                    </p>
+                    <p class="form__item">
+                        <label for="PatronymicName" class="form__label">@Html.DisplayNameFor(model => model.PatronymicName)</label>
+                        <input type="text" name="PatronymicName" minlength="1" maxlength="50" size="30" class="form__element"
+                        placeholder="@Html.DisplayNameFor(model => model.PatronymicName)"
+                        value="@Html.DisplayFor(Model => Model.PatronymicName)">
+                    </p>
+                    <p class="form__item">
+                        <label for="Tel" class="form__label">@Html.DisplayNameFor(model => model.Tel)</label>
+                        <input type="tel" name="Tel" minlength="1" maxlength="20" size="20" required class="form__element"
+                        placeholder="@Html.DisplayNameFor(model => model.Tel)"
+                        value="@Html.DisplayFor(Model => Model.Tel)">
+                    </p>
+                    <p class="form__item">
+                        <label for="Address" class="form__label-text">@Html.DisplayNameFor(model => model.Address)</label>
+                        <textarea name="Address" cols="50" rows="2" class="form__element"
+                        placeholder="@Html.DisplayNameFor(model => model.Address)">
+                            @Html.DisplayFor(model => model.Address)
+                        </textarea>
+                    </p>
+                    <p class="form__item">
+                        <label for="Description" class="form__label-text">@Html.DisplayNameFor(model => model.Description)</label>
+                        <textarea name="Description" cols="50" rows="4" class="form__element"
+                        placeholder="@Html.DisplayNameFor(model => model.Description)" >
+                            @Html.DisplayFor(model => model.Description)
+                        </textarea>
+                    </p>
+                    <p class="form__item">
+                        <input type="submit" value="Сохранить изменения" class="form__button">
+                    </p>
+                </fieldset>
+            </form>
+            <script>
+
+                sendform.onsubmit = (e) => {
+                e.preventDefault();
+
+
+                var requestData = {
+                FamilyName: sendform.elements.FamilyName.value,
+                Name: sendform.elements.Name.value,
+                PatronymicName: sendform.elements.PatronymicName.value,
+                Tel: sendform.elements.Tel.value,
+                Address: sendform.elements.Address.value,
+                Description: sendform.elements.Description.value
+                };
+
+                let id = sendform.elements.Id;
+                fetch(`/Single/ChangeNote/${id.value}`, {
+                method: 'PUT',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+                })
+                .then( response => {
+                if (response.redirected) {
+                window.location.href = response.url;
+                } else {
+                if (response.ok) { } else { }
+                // Обработка ошибок 
+                }
+                })
+                .catch( error => {
+                console.error('Ошибка:', error);
+                });
+
+                };
+
+
+            </script>
+        </section>
+
+        <section id="content-delete" class="record-delete">
+            <h4>Запись &#8470;  @Html.DisplayFor(model => model.Id)</h4>
+            <hr />
+            <form class="form col-12 col-sm-12 col-md-12 col-lg-6 offset-lg-3" id="deleteform">
+                <fieldset>
+                    <legend>Вы действительно хотите удалить это?</legend>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    ФИО
+                                </th>
+                                <th>
+                                    Информация
+                                </th>                               
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(model => model.FamilyName)
+                                    @Html.DisplayFor(model => model.Name)
+                                    @Html.DisplayFor(model => model.PatronymicName)
+                                </td>
+                                <td>
+                                    <p>
+                                        @Html.DisplayFor(model => model.Tel)
+                                    </p>
+                                    <p>
+                                        @Html.DisplayFor(model => model.Address)
+                                    </p>
+                                    <p>
+                                        @Html.DisplayFor(model => model.Description)
+                                    </p>        
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                
+                    <p class="form__item">
+                        <input type="submit" value="Удалить" class="form__button">
+                    </p>
+                </fieldset>
+            </form>
+            <script>
+
+                deleteform.onsubmit = (e) => {
+                    e.preventDefault();
+
+                    let id = @Html.DisplayFor(model => model.Id);
+                    fetch(`/Single/DeleteNote/${id}`, {
+                        method: 'DELETE'   
+                    })
+                        .then(response => {
+                            if (response.redirected) {
+                                window.location.href = response.url;
+                            } else {
+                                if (response.ok) { } else { }
+                                // Обработка ошибок
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Ошибка:', error);
+                        });
+
+                };
+
+            </script>
+        </section>
+    }
+
+</div>

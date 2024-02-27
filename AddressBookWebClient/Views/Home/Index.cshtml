@@ -1,0 +1,267 @@
+﻿@model IEnumerable<Note>
+
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="head">Работа со списком</h1>
+
+
+<div class="tabs area">
+    <input type="radio" name="tab-btn" id="tab-btn-records" value="" checked>
+    <label for="tab-btn-records">Просмотр</label>
+
+    <input type="radio" name="tab-btn" id="tab-btn-searching" value="">
+    <label for="tab-btn-searching">Поиск</label>
+
+    @if (User.Identity.IsAuthenticated)
+        {
+        <input type="radio" name="tab-btn" id="tab-btn-adding" value="">
+        <label for="tab-btn-adding">Добавить запись</label>
+        }
+
+    <section id="content-records" class="record-looking">
+        <div class="record-looking">
+            
+            <section>
+
+                @if (ViewData["Letter"]!.ToString() != "")
+                {
+                    if (string.Compare(ViewData["Letter"]!.ToString(), "all") == 0)
+                    {
+                        <nav class="letters__item">
+                            <a asp-action="RetrievalByLetter" asp-route-letter=@ViewData["Letter"]!.ToString() asp-route-trend=@((int)ViewData["Page"]) class="letters__link letters__link-checked">
+                                Все записи
+                            </a>
+
+                            <a asp-action="RetrievalByLetter" asp-route-letter=@ViewData["Letter"]!.ToString() asp-route-trend=@((int)ViewData["Page"]-1) class="letters__link-left">&#8678;</a>
+                            @Html.Raw(" ")
+                            <span class="letters__link-center">@ViewData["Page"]!.ToString()</span>
+                            @Html.Raw(" ")
+                            <a asp-action="RetrievalByLetter" asp-route-letter=@ViewData["Letter"]!.ToString() asp-route-trend=@((int)ViewData["Page"]+1) class="letters__link-right">&#8680;</a>
+                        </nav>
+                    }
+                    else
+                    {
+                        <nav class="letters__item">
+                            <a asp-action="RetrievalByLetter" asp-route-letter=@ViewData["Letter"]!.ToString() asp-route-trend=@((int)ViewData["Page"]) class="letters__link letters__link-checked">
+                                @ViewData["Letter"]!.ToString()
+                            </a>
+
+                            <a asp-action="RetrievalByLetter" asp-route-letter=@ViewData["Letter"]!.ToString() asp-route-trend=@((int)ViewData["Page"]-1) class="letters__link-left">&#8678;</a>
+                            @Html.Raw(" ")
+                            <span class="letters__link-center">@ViewData["Page"]!.ToString()</span>
+                            @Html.Raw(" ")
+                            <a asp-action="RetrievalByLetter" asp-route-letter=@ViewData["Letter"]!.ToString() asp-route-trend=@((int)ViewData["Page"]+1) class="letters__link-right">&#8680;</a>
+                        </nav>
+                    }
+  
+                }
+
+                @if (ViewData["Clue"]!.ToString() != "")
+                {
+                    <nav class="letters__item">
+                        <a asp-action="RetrievalByClue" asp-route-clue=@ViewData["Clue"]!.ToString() asp-route-trend=@((int)ViewData["Page"]) class="letters__link letters__link-checked">
+                            @ViewData["Clue"]!.ToString()
+                        </a>
+
+                        <a asp-action="RetrievalByClue" asp-route-clue=@ViewData["Clue"]!.ToString() asp-route-trend=@((int)ViewData["Page"]-1) class="letters__link-left">&#8678;</a>
+                        @Html.Raw(" ")
+                        <span class="letters__link-center">@ViewData["Page"]!.ToString()</span>
+                        @Html.Raw(" ")
+                        <a asp-action="RetrievalByClue" asp-route-clue=@ViewData["Clue"]!.ToString() asp-route-trend=@((int)ViewData["Page"]+1) class="letters__link-right">&#8680;</a>
+                    </nav>
+                }
+                    
+                
+
+
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Id)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FamilyName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Name)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.PatronymicName)
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(model => item.Id)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => item.FamilyName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => item.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => item.PatronymicName)
+                                </td>
+                                <td>
+                                    <a asp-controller="Single" asp-action="Single" asp-route-tab="Details" asp-route-id="@item.Id">Подробно</a>
+                                    
+
+                                    @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
+                                    {
+                                        @Html.Raw("|")
+                                        <a asp-controller="Single" asp-action="Single" asp-route-tab="Edit" asp-route-id="@item.Id">Изменить</a>
+                                        @Html.Raw("|")
+                                        <a asp-controller="Single" asp-action="Single" asp-route-tab="Delete" asp-route-id="@item.Id">Удалить</a>
+                                    } 
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </section>  
+        </div>
+    </section>
+
+    <section id="content-searching" class="record-found">
+        
+
+
+        <form class="form col-12 col-sm-12 col-md-12 col-lg-6" method="get" asp-action="RetrievalByClue">
+            <fieldset>
+                <legend>Поиск по ключевому слову</legend>
+
+                <p class="form__item">
+                    <label for="clue" class="form__label">Ключевое слово</label>
+                    <input type="text" name="clue" minlength="1" maxlength="50" size="30" required class="form__element">
+                    <input type="hidden" name="trend" value="0">
+                </p>
+                
+                <p class="form__item">
+                    <input type="submit" value="Найти" class="form__button">
+                </p>
+
+            </fieldset>
+        </form>
+
+        <form class="form col-12 col-sm-12 col-md-12 col-lg-6"  >
+            <fieldset>
+                <legend>Поиск по букве</legend>
+                <nav class="nav__letters">
+                    <ul class="letters__list">
+                        @{
+                            string[] letters = {"А", "Б", "В", "Г", "Д", "Е", "Ж", "З", "И", "К",
+                        "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ", "Э", "Ю", "Я"};
+
+
+
+                            for (int i = 0; i < letters.Length; i++)
+                            {
+                                if (string.Compare(ViewData["Letter"]!.ToString(), letters[i]) == 0)
+                                {
+                                    <li class="letters__item">
+                                        <a asp-action="RetrievalByLetter" asp-route-letter=@letters[i] asp-route-trend=0 class="letters__link letters__link-checked">@letters[i]</a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="letters__item">
+                                        <a asp-action="RetrievalByLetter" asp-route-letter=@letters[i] asp-route-trend=0 class="letters__link">@letters[i]</a>
+                                    </li>
+                                }
+                            }
+                        }
+
+                    </ul>
+                </nav>
+
+            </fieldset>
+        </form>
+
+        <form class="form col-12 col-sm-12 col-md-12 col-lg-6">
+            <fieldset>
+                <legend>Все записи</legend>
+                <nav class="nav__letters">
+                    <ul class="letters__list">
+                        @{
+
+                            if (string.Compare(ViewData["Letter"]!.ToString(), "all") == 0)
+                            {
+                                <li class="letters__item">
+                                    <a asp-action="RetrievalByLetter" asp-route-letter="all" asp-route-trend=0 class="letters__link letters__link-checked">Все</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="letters__item">
+                                    <a asp-action="RetrievalByLetter" asp-route-letter="all" asp-route-trend=0 class="letters__link">Все</a>
+                                </li>
+                            }
+
+                        }
+
+                    </ul>
+                </nav>
+            </fieldset>
+        </form>
+
+
+        
+    </section>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+    <section id="content-adding" class="record-adding">
+
+            <form class="form col-12 col-sm-12 col-md-12 col-lg-6 offset-lg-3" method="post" asp-action="AddNote">
+            <fieldset>
+                <legend>Добавление записи</legend>
+
+                <p class="form__item">
+                    <label for="FamilyName" class="form__label">Фамилия</label>
+                    <input type="text" name="FamilyName" minlength="1" maxlength="50" size="30" placeholder="Фамилия" required class="form__element">
+                </p>
+                <p class="form__item">
+                    <label for="Name" class="form__label">Имя</label>
+                    <input type="text" name="Name" minlength="1" maxlength="50" size="30" placeholder="Имя" required class="form__element">
+                </p>
+                <p class="form__item">
+                    <label for="PatronymicName" class="form__label">Отчество</label>
+                    <input type="text" name="PatronymicName" minlength="1" maxlength="50" size="30" placeholder="Отчетсво" class="form__element">
+                </p>
+                <p class="form__item">
+                    <label for="Tel" class="form__label">Телефон</label>
+                    <input type="tel" name="Tel" minlength="1" maxlength="20" size="20" placeholder="Телефон" required class="form__element">
+                </p>
+                <p class="form__item">
+                    <label for="Address" class="form__label-text">Адрес</label>
+                    <textarea name="Address" cols="50" rows="2" placeholder="Адрес" class="form__element"></textarea>
+                </p>
+                <p class="form__item">
+                    <label for="Description" class="form__label-text">Описание</label>
+                    <textarea name="Description" cols="50" rows="4" placeholder="Описание" class="form__element"></textarea>
+                </p>
+                <p class="form__item">
+                    <input type="submit" value="Сохранить" class="form__button">
+                </p>
+
+            </fieldset>
+        </form>
+
+    </section>
+    }
+
+</div>
+

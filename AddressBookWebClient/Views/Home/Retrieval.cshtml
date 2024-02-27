@@ -1,0 +1,92 @@
+﻿@model IEnumerable<Note>
+
+
+@{
+    ViewData["Title"] = "Retrieval";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="head">Работа с выборкой</h1>
+
+
+<div class="tabs area">
+    <input type="radio" name="tab-btn" id="tab-btn-records" value="" checked>
+    <label for="tab-btn-records">Просмотр</label>
+
+    <input type="radio" name="tab-btn" id="tab-btn-searching" value="">
+    <label for="tab-btn-searching">Поиск</label>
+
+    <section id="content-records" class="record-looking">    
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Id)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FamilyName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.PatronymicName)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(model => item.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.FamilyName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => item.PatronymicName)
+                        </td>
+                        <td>
+                            <a asp-controller="Single" asp-action="Single" asp-route-tab="Details" asp-route-id="@item.Id">Подробно</a>
+
+                            @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
+                            {
+                                @Html.Raw("|")
+                                <a asp-controller="Single" asp-action="Single" asp-route-tab="Edit" asp-route-id="@item.Id">Изменить</a> 
+                                @Html.Raw("|")
+                                <a asp-controller="Single" asp-action="Single" asp-route-tab="Delete" asp-route-id="@item.Id">Удалить</a>
+                            }
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+        
+    </section>
+
+    <section id="content-searching" class="record-found">
+        <form class="form col-12 col-sm-12 col-md-12 col-lg-6" method="post" asp-action="Retrieval">
+            <fieldset>
+                <legend>Поиск по ключевому слову</legend>
+
+                <p class="form__item">
+                    <label for="ClueText" class="form__label">Ключевое слово</label>
+                    <input type="text" name="ClueText" minlength="1" maxlength="50" size="30" required class="form__element">
+                </p>
+
+                <p class="form__item">
+                    <input type="submit" value="Найти" class="form__button">
+                </p>
+
+            </fieldset>
+        </form>
+    </section>
+
+</div>
